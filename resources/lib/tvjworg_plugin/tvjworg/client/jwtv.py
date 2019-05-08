@@ -65,10 +65,6 @@ def build_folders(subcat_ary, isStreaming):
 		dirs.append(item_hsh)
 	return dirs
 
-def get_json(url):
-	data = urllib2.urlopen(url).read().decode('utf-8')
-	return json.loads(data)
-
 def build_search_entries(result_ary):
 	results = []		
 	for r in result_ary:
@@ -95,16 +91,8 @@ class JWTV(object):
                  'jw.streaming.api': 'https://data.jw-api.org/mediator/v1/schedules/',
 		 'jw.media-items.api': 'https://data.jw-api.org/mediator/v1/media-items/'
                  }
-    def __init__(self, language='E', items_per_page=24):
-	#self._jwt_token = jwt_token        
-	self._language = language
+    def __init__(self, items_per_page=24):
 	self._items_per_page = items_per_page
-
-    def get_language(self):
-        return self._language
-
-    def set_language(self, language='E'):
-	self._language = language    
  
     def get_sub_categories(self, options): 	
 	language = options['language']
@@ -171,7 +159,7 @@ class JWTV(object):
 	if not token:
 		token = self.get_jwt_token()
 	url = self.LOCAL_MAP['jw.search.api']
-	query = urllib.urlencode({'q': query, 'lang': language, 'limit': 24})
+	query = urllib.urlencode({'q': query, 'lang': language, 'limit': self._items_per_page})
 	headers = {'Authorization': 'Bearer ' + token}
 	try: 
 		info = self.perform_v1_request(urllib2.Request(url + query, headers=headers))
