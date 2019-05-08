@@ -5,13 +5,9 @@
 """
 
 import os
-import sys
 import json
 import shutil
-import socket
-from base64 import b64decode
 import urllib,urllib2,urlparse,base64
-import web_pdb; 
 	
 from ..tvjworg.client import JWTV
 from .. import kodion
@@ -22,31 +18,14 @@ import xbmc
 import xbmcaddon																																																																																					
 import xbmcvfs
 import xbmcgui
-import xbmcplugin
-#import web_pdb 
+import xbmcplugin 
     
-def get_best_video(file_ary, video_res):
-	videos = []
-	for x in file_ary:
-		try:
-			if int(x['label'][:-1]) > video_res: continue
-        	except (ValueError, TypeError):
-        		if int(x['frameHeight']) > video_res: continue
-        	videos.append(x)
-    	videos = sorted(videos, reverse=True)
-    	#if subtitles == 'false': videos = [x for x in videos if x['subtitled'] == False]
-    	if len(videos) == 0: return None
-	return videos[0]
 
-     
 class Provider(kodion.AbstractProvider):
     def __init__(self):
         kodion.AbstractProvider.__init__(self)
 	self._client = JWTV( )
         
-    def reset_client(self):
-        self._client = None
-
     def get_client(self, context):
         if self._client is not None:
             return self._client
@@ -149,19 +128,12 @@ class Provider(kodion.AbstractProvider):
 	video_res = context.get_settings().get_string('video_res')    	
 	#video = get_best_video(info['media'][0]['files'], video_res)
 	
-	#web_pdb.set_trace()
+	
 	video = self._client.get_media_item({'language':language, 'video_res': video_res, 'video_key':video_key})   	
 	context.log_notice("_______________")
 	context.log_notice(video)	
 	context.log_notice("________________")
 
 	if video:
-		#sqr_img = ''
-		#wide_img = ''
-		#r = info['media'][0]
-		#if 'sqr' in r['images']: sqr_img = r['images']['sqr'].get('md')
-        	#elif 'cvr' in r['images']: sqr_img = r['images']['cvr'].get('md')
-        	#if 'pnr' in r['images']: wide_img = r['images']['pnr'].get('md')
-		#context.log_notice(video['title'], video['progressiveDownloadURL'])
 		return VideoItem(video['title'], video['progressiveDownloadURL'])
 

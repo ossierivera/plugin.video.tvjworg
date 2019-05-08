@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 """
     Copyright (C) 2014-2016 ossierivera (plugin.video.tvjworg)
-    Copyright (C) 2016-2018 plugin.video.youtube
+    Copyright (C) 2016-2018 plugin.video.tvjworg
     SPDX-License-Identifier: GPL-2.0-only
     See LICENSES/GPL-2.0-only for more information.
 """
 
-import copy
-
-import requests
-
 import urllib,urllib2,urlparse,base64
 import json
-import web_pdb 
+ 
 
 def get_best_video(file_ary, video_res):
 	video_res = [1080,720,480,360,240][int(video_res)]	
@@ -68,11 +64,6 @@ def build_folders(subcat_ary, isStreaming):
 		item_hsh = {'type':'directory', 'title':s.get('name'), 'url':urilist, 'sqr_img':image, 'wide_img':fanart}		
 		dirs.append(item_hsh)
 	return dirs
- 
-def build_media_entries(file_ary, res):
-	vids = []   
-	video_res = res #context.get_settings().get_string('video_res')	 
-	return get_video_metadata(file_ary, video_res)
 
 def get_json(url):
 	data = urllib2.urlopen(url).read().decode('utf-8')
@@ -89,7 +80,7 @@ def build_search_entries(result_ary):
 		fanart = ""
  
     		for i in r.get('images'):
-            		if i.get('size') == 'md' and i.get('type') == 'sqr':
+        buil    		if i.get('size') == 'md' and i.get('type') == 'sqr':
                 		img = i.get('url')
             		if i.get('size') == 'md' and i.get('type') == 'pnr':
                 		fanart =  i.get('url')
@@ -115,15 +106,8 @@ class JWTV(object):
     def set_language(self, language='E'):
 	self._language = language    
  
-    def get_sub_categories(self, options): #language, sub_level, isStreaming):
-	language = ''
-	sub_level = ''
-	isStreaming = ''	
-	if options['language']: 
-		language = options['language']
-	else:
-		language = 'E'
-	
+    def get_sub_categories(self, options): 	
+	language = options['language']
 	sub_level = options['sub_level']
 	isStreaming = options['isStreaming']
 	video_res = options['video_res']
@@ -138,7 +122,7 @@ class JWTV(object):
 		result.extend(tmpdirs)
 
         if 'media' in info['category']: 
-		tmpmedia = build_media_entries(info['category']['media'], video_res) #take care of the res problem
+		tmpmedia = get_video_metadata(info['category']['media'], video_res) #take care of the res problem
 		result.extend(tmpmedia)
         return result
 
@@ -191,13 +175,11 @@ class JWTV(object):
 	headers = {'Authorization': 'Bearer ' + token}
 	try: 
 		info = self.perform_v1_request(urllib2.Request(url + query, headers=headers))
-                #return (token, info)
 	except urllib2.HTTPError as e:
         	if e.code == 401:
 			token = self.get_jwt_token()
                 	headers = {'Authorization': 'Bearer ' + token}
                 	info = self.perform_v1_request(urllib2.Request(url + query, headers=headers))
-			#return (token, info)
             	else:
                 	raise
 	# have info and token
