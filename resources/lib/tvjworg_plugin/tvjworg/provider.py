@@ -12,13 +12,9 @@ import urllib,urllib2,urlparse,base64
 from ..tvjworg.client import JWTV
 from .. import kodion
 from ..kodion.items import *
-from ..kodion.impl.xbmc.xbmc_items import to_playback_item
 
-import xbmc
-import xbmcaddon																																																																																					
-import xbmcvfs
-import xbmcgui
-import xbmcplugin 
+import xbmc																																																																																					
+import xbmcgui 
     
 
 class Provider(kodion.AbstractProvider):
