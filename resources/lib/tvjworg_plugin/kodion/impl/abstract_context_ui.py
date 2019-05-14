@@ -43,11 +43,3 @@ class AbstractContextUI(object):
     def show_notification(self, message, header='', image_uri='', time_milliseconds=5000):
         raise NotImplementedError()
 
-    @staticmethod
-    def refresh_container():
-        """
-        Needs to be implemented by a mock for testing or the real deal.
-        This will refresh the current container or list.
-        :return:
-        """
-        raise NotImplementedError()
