@@ -33,7 +33,6 @@ class AbstractContext(object):
         self._playback_history = None
         self._favorite_list = None
         self._watch_later_list = None
-        self._access_manager = None
 
         self._plugin_name = str(plugin_name)
         self._version = 'UNKNOWN'
@@ -62,13 +61,6 @@ class AbstractContext(object):
         if not self._cache_path:
             self._cache_path = os.path.join(self.get_data_path(), 'kodion')
         return self._cache_path
-
-    def get_playback_history(self):
-        if not self._playback_history:
-            uuid = self.get_access_manager().get_current_user_id()
-            db_file = os.path.join(os.path.join(self.get_data_path(), 'playback'), str(uuid))
-            self._playback_history = PlaybackHistory(db_file)
-        return self._playback_history
 
     def get_data_cache(self):
         if not self._data_cache:
@@ -108,11 +100,6 @@ class AbstractContext(object):
         if not self._watch_later_list:
             self._watch_later_list = WatchLaterList(os.path.join(self.get_cache_path(), 'watch_later'))
         return self._watch_later_list
-
-    def get_access_manager(self):
-        if not self._access_manager:
-            self._access_manager = AccessManager(self)
-        return self._access_manager
 
     def get_video_playlist(self):
         raise NotImplementedError()
