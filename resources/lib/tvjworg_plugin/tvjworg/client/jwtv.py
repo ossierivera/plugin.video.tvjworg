@@ -76,7 +76,7 @@ def build_search_entries(result_ary):
 		fanart = ""
  
     		for i in r.get('images'):
-        buil    		if i.get('size') == 'md' and i.get('type') == 'sqr':
+   		        if i.get('size') == 'md' and i.get('type') == 'sqr':
                 		img = i.get('url')
             		if i.get('size') == 'md' and i.get('type') == 'pnr':
                 		fanart =  i.get('url')
