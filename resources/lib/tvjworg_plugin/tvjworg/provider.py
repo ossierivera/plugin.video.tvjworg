@@ -79,15 +79,40 @@ class Provider(kodion.AbstractProvider):
 
 	(time_pos, info) = self._client.get_streaming_schedule(options)
 
-	
-	pl = xbmc.PlayList(1)
-	pl.clear()
-	for itm in info:
-		li = xbmcgui.ListItem(itm['title'])
-		li.setArt({'icon': itm['sqr_img'], 'thumb': itm['sqr_img']})
-		pl.add(itm['video'], li)
-	xbmc.Player().play(pl)
-	xbmc.Player().seekTime(time_pos)
+	player = context.get_video_player()
+        player.stop()
+
+        playlist = context.get_video_playlist()
+        playlist.clear()
+
+        totalduration = 0
+        index = 0
+        offset = 0
+        markerIsSet = False
+        for itm in info:
+            video = VideoItem(itm['title'], itm['video'], itm['sqr_img'], itm['sqr_img'])
+            #context.log_notice("item duration: " + str(itm['dur']) )
+            if (not markerIsSet):
+                totalduration = totalduration + itm['dur']
+                
+                if (totalduration > time_pos):
+                    markerIsSet = True
+                    offset = index
+                else:
+                    index = index + 1
+            playlist.add(video)
+
+            
+        player.play(playlist_index=offset)
+
+	#pl = xbmc.PlayList(1)
+	#pl.clear()
+	#for itm in info:
+	#	li = xbmcgui.ListItem(itm['title'])
+	#	li.setArt({'icon': itm['sqr_img'], 'thumb': itm['sqr_img']})
+	#	pl.add(itm['video'], li)
+	#xbmc.Player().play(pl)
+	#xbmc.Player().seekTime(time_pos)
 	return 
 		
 	
